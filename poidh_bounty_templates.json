@@ -1,0 +1,186 @@
+{
+  "bounties": [
+    {
+      "title": "Take a photo with a stranger holding 'POIDH' sign",
+      "description": "Find a stranger in a public place, ask them politely to hold a sign saying 'POIDH', and take a photo together. This tests your social skills and creates fun real-world interactions!",
+      "rewardSOL": 0.1,
+      "category": "social_interaction",
+      "requirements": [
+        "Photo must show you AND a stranger (not someone you know)",
+        "Stranger must be holding a clearly visible 'POIDH' sign",
+        "Both faces must be clearly visible and smiling",
+        "Photo must be taken outdoors or in a public space (not private residence)",
+        "Sign must be handwritten or clearly printed",
+        "No AI-generated or heavily edited images",
+        "Photo must appear recent (no old photos)"
+      ],
+      "evaluation_focus": {
+        "authenticity": "Check for genuine human interaction, natural poses, real-world setting",
+        "compliance": "Verify POIDH sign is visible, both people present, public location",
+        "quality": "Clear image, good lighting, readable sign text",
+        "validity": "Appears recent, no manipulation detected"
+      }
+    },
+    {
+      "title": "Do 100 pushups in a public park - video proof",
+      "description": "Complete 100 pushups continuously in one session at a public park. Record the entire session on video without cuts or edits.",
+      "rewardSOL": 0.15,
+      "category": "physical_challenge",
+      "requirements": [
+        "Video must show entire body throughout",
+        "All 100 pushups must be visible in one continuous take (no cuts)",
+        "Must be filmed in a clearly identifiable public park",
+        "Proper pushup form required (chest to ground, full extension)",
+        "Count must be visible/audible in video",
+        "No speed manipulation or video editing",
+        "Park features must be visible (trees, playground, etc.)"
+      ],
+      "evaluation_focus": {
+        "authenticity": "Continuous video, no cuts, real-time completion",
+        "compliance": "100 pushups completed, proper form, public park visible",
+        "quality": "Clear video, stable camera, full body visible",
+        "validity": "Real-time recording, no speed edits"
+      }
+    },
+    {
+      "title": "Buy a coffee for a homeless person and document it",
+      "description": "Purchase a hot coffee (or other beverage) for a homeless person and document the kind act. This bounty encourages real-world kindness.",
+      "rewardSOL": 0.12,
+      "category": "kindness",
+      "requirements": [
+        "Photo or video showing you giving coffee to homeless person",
+        "Receipt from coffee purchase must be visible",
+        "Must show the exchange happening (before/during/after)",
+        "Person's face can be blurred for privacy",
+        "Must include timestamp proof (receipt or digital)",
+        "No staged photos with friends/family",
+        "Must show genuine act of kindness"
+      ],
+      "evaluation_focus": {
+        "authenticity": "Real interaction, genuine homeless person, actual purchase",
+        "compliance": "Coffee visible, receipt shown, exchange documented",
+        "quality": "Clear documentation, respectful photography",
+        "validity": "Recent timestamp, appears legitimate"
+      }
+    },
+    {
+      "title": "Create street art with 'POIDH' and photograph it",
+      "description": "Create temporary street art (chalk, etc.) featuring 'POIDH' in a public space. Must be legal and non-destructive.",
+      "rewardSOL": 0.08,
+      "category": "creative",
+      "requirements": [
+        "Art must include 'POIDH' prominently",
+        "Must be in a public space (sidewalk, park, legal wall)",
+        "Use temporary/washable materials only (chalk, etc.)",
+        "Photo must show full artwork in context",
+        "Include yourself in photo for scale",
+        "Must be original creation (not copying existing art)",
+        "Location must be clearly visible/identifiable"
+      ],
+      "evaluation_focus": {
+        "authenticity": "Original artwork, real public space, actual creation",
+        "compliance": "POIDH visible, temporary materials, public location",
+        "quality": "Clear photo, artistic merit, good composition",
+        "validity": "Recent creation, legal location"
+      }
+    },
+    {
+      "title": "Get 5 strangers to do a silly pose together - group photo",
+      "description": "Convince 5 complete strangers to do a funny group pose together and photograph it. Great social experiment!",
+      "rewardSOL": 0.2,
+      "category": "social_interaction",
+      "requirements": [
+        "Must have exactly 5 strangers (people you don't know)",
+        "All must be doing the same silly pose",
+        "All faces must be visible and participating",
+        "Photo must be in a public place",
+        "You can be in the photo or taking it",
+        "No AI-generated images",
+        "Group must appear willing and happy"
+      ],
+      "evaluation_focus": {
+        "authenticity": "Real strangers, genuine interaction, natural poses",
+        "compliance": "5 people present, same pose, public location",
+        "quality": "Clear photo, all people visible, good composition",
+        "validity": "Appears recent and legitimate"
+      }
+    },
+    {
+      "title": "Plant a tree and document the process",
+      "description": "Plant a real tree (with proper permission) and document before/during/after with photos or video.",
+      "rewardSOL": 0.25,
+      "category": "environmental",
+      "requirements": [
+        "Show before: empty spot where tree will go",
+        "Show during: you actively planting the tree",
+        "Show after: planted tree with you next to it",
+        "Must have permission to plant (own property or authorized location)",
+        "Include timestamp proof",
+        "Real tree (not fake or moving existing tree)",
+        "Multiple photos/video showing full process"
+      ],
+      "evaluation_focus": {
+        "authenticity": "Real tree planting, actual hole digging, legitimate process",
+        "compliance": "All stages documented, proper location, real tree",
+        "quality": "Clear documentation, multiple angles, good proof",
+        "validity": "Recent activity, legitimate permission"
+      }
+    },
+    {
+      "title": "Solve a Rubik's cube in under 2 minutes - video proof",
+      "description": "Scramble and solve a Rubik's cube in under 2 minutes on video. Timer must be visible.",
+      "rewardSOL": 0.1,
+      "category": "skill_challenge",
+      "requirements": [
+        "Show scrambled cube at start",
+        "Timer must be visible throughout video",
+        "Complete solve in under 2 minutes",
+        "One continuous take (no cuts)",
+        "Both hands and cube must be visible",
+        "No speed manipulation",
+        "Must be standard 3x3 Rubik's cube"
+      ],
+      "evaluation_focus": {
+        "authenticity": "Real cube, real-time solve, no editing",
+        "compliance": "Under 2 minutes, timer visible, proper scramble",
+        "quality": "Clear video, cube and timer visible",
+        "validity": "Continuous recording, no manipulation"
+      }
+    },
+    {
+      "title": "Read a book to children at a public library",
+      "description": "Volunteer to read a children's book to kids at a public library. Document with photos (faces can be blurred).",
+      "rewardSOL": 0.18,
+      "category": "community_service",
+      "requirements": [
+        "Must be at a public library",
+        "Show yourself reading to children",
+        "Book must be visible",
+        "Children's faces can be blurred for privacy",
+        "Include library setting in background",
+        "Must have library permission (get staff confirmation if possible)",
+        "Show multiple angles/moments"
+      ],
+      "evaluation_focus": {
+        "authenticity": "Real library, genuine reading session, actual children present",
+        "compliance": "Library setting visible, reading happening, book shown",
+        "quality": "Respectful documentation, clear photos, appropriate privacy",
+        "validity": "Recent activity, legitimate permission"
+      }
+    }
+  ],
+  "metadata": {
+    "version": "1.0.0",
+    "last_updated": "2025-01-27",
+    "categories": [
+      "social_interaction",
+      "physical_challenge",
+      "kindness",
+      "creative",
+      "environmental",
+      "skill_challenge",
+      "community_service"
+    ],
+    "notes": "All bounties require real-world actions with photo/video proof. Bot randomly selects from this template pool."
+  }
+}
