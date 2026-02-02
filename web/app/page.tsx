@@ -63,7 +63,7 @@ export default function Page() {
 
   return (
     <main style={{ maxWidth: 980, margin: '0 auto', padding: 24 }}>
-      <h1 style={{ marginTop: 0 }}>POIDH Bot Dashboard</h1>
+      <h1 style={{ marginTop: 0 }}>Socially Bot Dashboard</h1>
 
       <section style={{ display: 'grid', gap: 12, gridTemplateColumns: '1fr', marginBottom: 20 }}>
         <div style={{ padding: 16, border: '1px solid #24304a', borderRadius: 12, background: '#0f1a2f' }}>

@@ -1,7 +1,7 @@
 {
-  "name": "poidh-autonomous-bounty-bot",
+  "name": "socially-autonomous-bounty-bot",
   "version": "1.0.0",
-  "description": "Fully autonomous AI-powered bounty bot for poidh platform",
+  "description": "Fully autonomous AI-powered bounty bot for Socially platform",
   "type": "module",
   "main": "src/main.js",
   "engines": {
@@ -17,6 +17,7 @@
     "worker:dev": "node --watch worker_server.js"
   },
   "keywords": [
+    "socially",
     "poidh",
     "bounty",
     "autonomous",

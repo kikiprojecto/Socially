@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * POIDH Autonomous Bounty Bot - Main Engine
+ * Socially Autonomous Bounty Bot - Main Engine
  * Fully autonomous AI-powered bounty management system
  * 
  * This bot:

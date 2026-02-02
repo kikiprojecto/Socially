@@ -6,7 +6,7 @@ wallet.json
 wallet.enc
 *.key
 *.pem
-logs/
+/logs/
 *.log
 *.jsonl
 npm-debug.log*

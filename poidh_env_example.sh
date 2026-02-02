@@ -1,4 +1,4 @@
-# POIDH Autonomous Bot - Environment Configuration
+# Socially Autonomous Bot - Environment Configuration
 # Complete setup guide: see SETUP_WITH_OLLAMA.md
 
 # ============================================
@@ -56,7 +56,7 @@ MAX_SUBMISSIONS=50
 BOUNTY_DURATION=604800000
 
 # ============================================
-# OPTIONAL: POIDH Platform Configuration
+# OPTIONAL: Platform Configuration
 # ============================================
 # POIDH API endpoint (update with actual endpoint when available)
 POIDH_API_URL=https://api.poidh.xyz

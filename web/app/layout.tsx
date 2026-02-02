@@ -3,8 +3,8 @@ import './globals.css';
 import type { ReactNode } from 'react';
 
 export const metadata = {
-  title: 'POIDH Bot Dashboard',
-  description: 'Public dashboard for POIDH autonomous bounty bot'
+  title: 'Socially Bot Dashboard',
+  description: 'Public dashboard for Socially autonomous bounty bot'
 };
 
 export default function RootLayout({

@@ -20,7 +20,7 @@ const PoidhBountyBot = () => {
     setTimeout(() => {
       const bounty = {
         id: 'bounty_' + Date.now(),
-        title: 'Take a photo with a stranger holding "POIDH" sign',
+        title: 'Take a photo with a stranger holding "Socially" sign',
         reward: '0.1 SOL',
         deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
         status: 'active'
@@ -76,7 +76,7 @@ const PoidhBountyBot = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                🤖 POIDH Autonomous Bounty Bot
+                🤖 Socially Autonomous Bounty Bot
               </h1>
               <p className="text-gray-600 text-lg">
                 Fully autonomous AI-powered bounty management system
@@ -159,7 +159,7 @@ const PoidhBountyBot = () => {
               <div className="bg-gray-50 rounded-xl p-6 font-mono text-sm">
                 <pre className="text-gray-800 whitespace-pre-wrap">
 {`┌─────────────────────────────────────────────┐
-│         POIDH AUTONOMOUS BOT SYSTEM         │
+│        SOCIALLY AUTONOMOUS BOT SYSTEM       │
 └─────────────────────────────────────────────┘
 
 1. INITIALIZATION PHASE

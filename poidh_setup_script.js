@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * POIDH Autonomous Bot - Setup Script
+ * Socially Autonomous Bot - Setup Script
  * Initializes wallet, validates configuration, and prepares bot for first run
  */
 
@@ -27,7 +27,7 @@ function question(prompt) {
 }
 
 async function main() {
-  console.log('\n🤖 POIDH Autonomous Bot - Setup Wizard\n');
+  console.log('\n🤖 Socially Autonomous Bot - Setup Wizard\n');
   console.log('This script will help you set up your bot for the first time.\n');
 
   // Check .env file

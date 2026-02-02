@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# POIDH Bot - Windows PowerShell Startup Script
+# Socially Bot - Windows PowerShell Startup Script
 # Run two terminals with one command for easy startup
 
 param(
@@ -10,7 +10,7 @@ param(
 if ($Help) {
     Write-Host @"
 ╔════════════════════════════════════════════╗
-║  POIDH Bot Startup Script for PowerShell   ║
+║ Socially Bot Startup Script for PowerShell ║
 ╚════════════════════════════════════════════╝
 
 USAGE:
@@ -19,7 +19,7 @@ USAGE:
   .\startup.ps1 -Help        Show this help
 
 DESCRIPTION:
-  This script starts the POIDH bot. It does NOT start OLLAMA.
+  This script starts the Socially bot. It does NOT start OLLAMA.
   You must start OLLAMA first in a separate terminal:
   
   PowerShell Terminal 1:
@@ -55,7 +55,7 @@ $Info = "Cyan"
 $Warning = "Yellow"
 
 Write-Host "╔════════════════════════════════════════════╗" -ForegroundColor $Info
-Write-Host "║   POIDH Autonomous Bot - Startup Script    ║" -ForegroundColor $Info
+Write-Host "║  Socially Autonomous Bot - Startup Script  ║" -ForegroundColor $Info
 Write-Host "╚════════════════════════════════════════════╝" -ForegroundColor $Info
 Write-Host ""
 
@@ -113,7 +113,7 @@ if ($Setup) {
 # Start the bot
 Write-Host ""
 Write-Host "╔════════════════════════════════════════════╗" -ForegroundColor $Success
-Write-Host "║        Starting POIDH Bot...               ║" -ForegroundColor $Success
+Write-Host "║       Starting Socially Bot...             ║" -ForegroundColor $Success
 Write-Host "╚════════════════════════════════════════════╝" -ForegroundColor $Success
 Write-Host ""
 

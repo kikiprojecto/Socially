@@ -1,5 +1,5 @@
 @echo off
-REM POIDH Bot - Windows Setup Script
+REM Socially Bot - Windows Setup Script
 REM This script automates the OLLAMA + bot setup process
 
 setlocal enabledelayedexpansion
@@ -7,7 +7,7 @@ cls
 
 echo.
 echo ============================================
-echo   POIDH Autonomous Bot - Windows Setup
+echo   Socially Autonomous Bot - Windows Setup
 echo ============================================
 echo.
 
