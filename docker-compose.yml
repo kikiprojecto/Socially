@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  socially-worker:
+    build: .
+    ports:
+      - "8787:8787"
+    environment:
+      - WORKER_PORT=8787
+      - WORKER_TOKEN=${WORKER_TOKEN}
+      - SOLANA_NETWORK=${SOLANA_NETWORK}
+      - OLLAMA_API_URL=${OLLAMA_API_URL}
+      - OLLAMA_MODEL=${OLLAMA_MODEL}
+      - DEMO_MODE=${DEMO_MODE}
+      - DRY_RUN_PAYMENTS=${DRY_RUN_PAYMENTS}
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped

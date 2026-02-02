@@ -20,6 +20,8 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { loadOrCreateWallet } from './poidh_wallet.js';
+import { ClaudeEvaluator } from './src/ai/ClaudeEvaluator.js';
+import { PoidhIndexerClient } from './src/api/PoidhIndexerClient.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,6 +34,9 @@ const CONFIG = {
   maxSubmissionsPerBounty: Number.parseInt(process.env.MAX_SUBMISSIONS || '50', 10),
   bountyDuration: Number.parseInt(process.env.BOUNTY_DURATION || `${7 * 24 * 60 * 60 * 1000}`, 10), // 7 days
   poidhApiUrl: 'https://api.poidh.xyz', // Example URL - adjust to actual poidh API
+  poidhIndexerBaseUrl: process.env.POIDH_INDEXER_BASE_URL || '',
+  poidhChainId: process.env.POIDH_CHAIN_ID ? Number.parseInt(process.env.POIDH_CHAIN_ID, 10) : null,
+  poidhBountyId: process.env.POIDH_BOUNTY_ID || null,
 };
 
 // Initialize logger
@@ -83,6 +88,24 @@ class BountyManager {
     this.demoMode = (process.env.DEMO_MODE || 'false').toLowerCase() === 'true';
     this.activeBounty = null;
     this.submissions = new Map();
+
+    this.poidhIndexer = null;
+    if (CONFIG.poidhIndexerBaseUrl && CONFIG.poidhChainId && CONFIG.poidhBountyId && !this.demoMode) {
+      try {
+        this.poidhIndexer = new PoidhIndexerClient({ baseUrl: CONFIG.poidhIndexerBaseUrl });
+      } catch (e) {
+        logger.error('Failed to initialize POIDH indexer client', { error: e?.message || String(e) });
+      }
+    }
+
+    this.evaluator = new ClaudeEvaluator({
+      ollamaUrl: this.ollamaUrl,
+      model: this.model,
+      logger: {
+        info: (message, data) => logger.info(message, data),
+        error: (message, data) => logger.error(message, data)
+      }
+    });
   }
 
   async createBounty() {
@@ -104,6 +127,18 @@ class BountyManager {
     };
 
     logger.info('Bounty template selected', { title: bounty.title });
+
+    if (this.poidhIndexer) {
+      try {
+        const remote = await this.poidhIndexer.getBounty(CONFIG.poidhChainId, CONFIG.poidhBountyId);
+        const remoteTitle = remote?.title || remote?.bounty?.title;
+        bounty.id = String(CONFIG.poidhBountyId);
+        if (remoteTitle) bounty.title = remoteTitle;
+        bounty.poidh = remote;
+      } catch (e) {
+        logger.error('Failed to fetch POIDH bounty from indexer', { error: e?.message || String(e) });
+      }
+    }
 
     // For actual poidh integration, you would:
     // 1. Call poidh smart contract to create bounty
@@ -138,6 +173,39 @@ class BountyManager {
     }
 
     logger.info('Checking for new submissions...');
+
+    if (this.poidhIndexer) {
+      let claimsPayload;
+      try {
+        claimsPayload = await this.poidhIndexer.getBountyClaims(CONFIG.poidhChainId, CONFIG.poidhBountyId);
+      } catch (e) {
+        logger.error('Failed to fetch claims from POIDH indexer', { error: e?.message || String(e) });
+        return this.submissions.size;
+      }
+
+      const claims = Array.isArray(claimsPayload)
+        ? claimsPayload
+        : (claimsPayload?.claims || claimsPayload?.data || []);
+
+      for (const claim of claims) {
+        const id = String(claim?.id ?? claim?.claimId ?? claim?.claim_id ?? '');
+        if (!id) continue;
+        if (this.submissions.has(id)) continue;
+
+        const walletAddress = String(
+          claim?.issuer ?? claim?.claimer ?? claim?.user ?? claim?.wallet ?? claim?.address ?? ''
+        );
+
+        this.addSubmission({
+          id,
+          walletAddress,
+          imageUrl: claim?.imageUrl ?? claim?.image_url ?? claim?.mediaUrl ?? claim?.media_url ?? claim?.uri ?? null,
+          raw: claim
+        });
+      }
+
+      return this.submissions.size;
+    }
 
     // In production, poll poidh API or listen to on-chain events
     // Example:
@@ -215,87 +283,13 @@ class BountyManager {
       };
     }
 
-    // In production, submission.imageBase64 would contain actual image data
-    // For demo purposes, we simulate the AI evaluation
-    
-    const prompt = `Evaluate this bounty submission:
+    const evaluation = await this.evaluator.evaluateSubmission({
+      submissionId: submission?.id,
+      title: this.activeBounty?.title || 'Bounty',
+      requirements
+    });
 
-Title: ${this.activeBounty.title}
-Requirements: ${JSON.stringify(requirements, null, 2)}
-
-Rate the submission 0-100 on these criteria:
-
-1. Authenticity (0-40 points): 
-   - Is this a genuine, unedited photo?
-   - Any signs of AI generation or heavy manipulation?
-   - Does it show a real-world action?
-
-2. Compliance (0-30 points):
-   - Does it meet ALL stated requirements?
-   - Are required elements clearly visible?
-   - Is the task correctly completed?
-
-3. Quality (0-20 points):
-   - Is the image clear and well-composed?
-   - Does it provide strong proof of completion?
-   - Professional presentation?
-
-4. Validity (0-10 points):
-   - Does it appear recent/timely?
-   - Is submission within deadline?
-   - Legitimate user interaction?
-
-Respond with ONLY valid JSON in this exact format:
-{
-  "authenticity_score": <number 0-40>,
-  "compliance_score": <number 0-30>,
-  "quality_score": <number 0-20>,
-  "validity_score": <number 0-10>,
-  "total_score": <sum of above>,
-  "reasoning": "<2-3 sentence explanation>",
-  "winner_worthy": <true if total >= 70, else false>
-}`;
-
-    try {
-      const response = await axios.post(`${this.ollamaUrl}/api/generate`, {
-        model: this.model,
-        prompt: prompt,
-        stream: false
-      });
-
-      const text = response.data.response;
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      
-      if (!jsonMatch) {
-        throw new Error('Invalid AI response format');
-      }
-
-      const evaluation = JSON.parse(jsonMatch[0]);
-      
-      // Validate evaluation structure
-      const requiredFields = ['authenticity_score', 'compliance_score', 'quality_score', 'validity_score', 'total_score', 'reasoning', 'winner_worthy'];
-      for (const field of requiredFields) {
-        if (!(field in evaluation)) {
-          throw new Error(`Missing required field: ${field}`);
-        }
-      }
-
-      return evaluation;
-
-    } catch (error) {
-      logger.error('AI evaluation failed', { error: error.message });
-      
-      // Fallback scoring if AI fails
-      return {
-        authenticity_score: 20,
-        compliance_score: 15,
-        quality_score: 10,
-        validity_score: 5,
-        total_score: 50,
-        reasoning: 'Automatic evaluation failed, using conservative default scores',
-        winner_worthy: false
-      };
-    }
+    return evaluation;
   }
 
   async selectWinner(evaluations) {
@@ -373,12 +367,22 @@ Respond with ONLY valid JSON in this exact format:
       amount: this.activeBounty.rewardSOL + ' SOL'
     });
 
+    let recipientPubkey;
+    try {
+      recipientPubkey = new PublicKey(winner.walletAddress);
+    } catch {
+      logger.error('Payment failed: invalid Solana recipient address', {
+        recipient: winner.walletAddress
+      });
+      return false;
+    }
+
     try {
       // Create payment transaction
       const transaction = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: this.wallet.publicKey,
-          toPubkey: new PublicKey(winner.walletAddress),
+          toPubkey: recipientPubkey,
           lamports: this.activeBounty.rewardLamports
         })
       );

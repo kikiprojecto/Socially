@@ -1,0 +1,23 @@
+Socially Evidence Capture Checklist
+
+1) Worker health + auth
+- GET /health output
+- GET /status output (authorized)
+- GET /metrics output (authorized)
+
+2) Dashboard
+- Screenshot showing Worker Online, Bot status, Live stream state
+- Screenshot showing Bot log + Decision log panels populated
+
+3) Bot execution
+- bot-YYYY-MM-DD.jsonl excerpt: bounty creation + claim ingestion
+- decisions.jsonl excerpt: winner selection reasoning + score breakdown
+
+4) POIDH Indexer integration
+- Example HTTP responses from:
+  - /bounty/:chainId/:bountyId
+  - /bounty/claims/:chainId/:bountyId
+
+5) Payment evidence
+- If DRY_RUN_PAYMENTS=true: log line showing DRY_RUN
+- If real payment: signature + explorer link
