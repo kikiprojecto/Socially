@@ -31,7 +31,8 @@
   "dependencies": {
     "@solana/web3.js": "^1.95.8",
     "axios": "^1.7.9",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "ethers": "^6.9.0"
   },
   "devDependencies": {
     "eslint": "^9.17.0"

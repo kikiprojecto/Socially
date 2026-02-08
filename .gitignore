@@ -47,6 +47,7 @@ downloads/
 # Documentation (keep repo professional)
 *.md
 !/windsurf_master_instructions.md
+!/windsurf_master_instructions (MUST PERFECT ENTIRELY).md
 !/README.md
 !/DEPLOYMENT.md
 !/BOUNTY_CLAIM.md
