@@ -22,6 +22,8 @@ import { fileURLToPath } from 'url';
 import { loadOrCreateWallet } from './poidh_wallet.js';
 import { ClaudeEvaluator } from './src/ai/ClaudeEvaluator.js';
 import { PoidhIndexerClient } from './src/api/PoidhIndexerClient.js';
+import { loadOrCreateEvmWallet, connectEvmProvider } from './src/blockchain/EvmWallet.js';
+import { PoidhEvmContract } from './src/blockchain/PoidhEvmContract.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,6 +39,8 @@ const CONFIG = {
   poidhIndexerBaseUrl: process.env.POIDH_INDEXER_BASE_URL || '',
   poidhChainId: process.env.POIDH_CHAIN_ID ? Number.parseInt(process.env.POIDH_CHAIN_ID, 10) : null,
   poidhBountyId: process.env.POIDH_BOUNTY_ID || null,
+  poidhMode: (process.env.POIDH_MODE || 'indexer').toLowerCase(),
+  evmNetwork: process.env.EVM_NETWORK || 'base-sepolia'
 };
 
 // Initialize logger
@@ -88,6 +92,8 @@ class BountyManager {
     this.demoMode = (process.env.DEMO_MODE || 'false').toLowerCase() === 'true';
     this.activeBounty = null;
     this.submissions = new Map();
+    this.evmSigner = null;
+    this.poidhEvm = null;
 
     this.poidhIndexer = null;
     if (CONFIG.poidhIndexerBaseUrl && CONFIG.poidhChainId && CONFIG.poidhBountyId && !this.demoMode) {
@@ -95,6 +101,17 @@ class BountyManager {
         this.poidhIndexer = new PoidhIndexerClient({ baseUrl: CONFIG.poidhIndexerBaseUrl });
       } catch (e) {
         logger.error('Failed to initialize POIDH indexer client', { error: e?.message || String(e) });
+      }
+    }
+
+    if (CONFIG.poidhMode === 'evm' && !this.demoMode) {
+      try {
+        const evmWallet = loadOrCreateEvmWallet();
+        const provider = connectEvmProvider();
+        this.evmSigner = evmWallet.connect(provider);
+        this.poidhEvm = new PoidhEvmContract({ signer: this.evmSigner, network: CONFIG.evmNetwork });
+      } catch (e) {
+        logger.error('Failed to initialize EVM POIDH contract', { error: e?.message || String(e) });
       }
     }
 
@@ -350,6 +367,69 @@ class BountyManager {
     }
 
     const dryRunPayments = (process.env.DRY_RUN_PAYMENTS || 'false').toLowerCase() === 'true';
+    if (CONFIG.poidhMode === 'evm') {
+      if (dryRunPayments) {
+        logger.success('Dry-run payment: skipping EVM claim acceptance', {
+          recipient: winner.walletAddress,
+          bountyId: this.activeBounty?.id,
+          claimId: winner.id
+        });
+
+        this.activeBounty.status = 'completed';
+        this.activeBounty.winnerId = winner.id;
+        this.activeBounty.paymentSignature = 'DRY_RUN';
+        return true;
+      }
+
+      if (!this.poidhEvm) {
+        logger.error('EVM payment failed: POIDH EVM contract not initialized');
+        return false;
+      }
+
+      if (!CONFIG.poidhBountyId) {
+        logger.error('EVM payment failed: POIDH_BOUNTY_ID is required in POIDH_MODE=evm');
+        return false;
+      }
+
+      let bountyId;
+      let claimId;
+      try {
+        bountyId = BigInt(String(CONFIG.poidhBountyId));
+        claimId = BigInt(String(winner.id));
+      } catch {
+        logger.error('EVM payment failed: invalid bountyId/claimId', {
+          bountyId: CONFIG.poidhBountyId,
+          claimId: winner.id
+        });
+        return false;
+      }
+
+      logger.info('Accepting EVM claim (payout occurs on-chain)', {
+        contract: this.poidhEvm.address,
+        network: CONFIG.evmNetwork,
+        bountyId: String(bountyId),
+        claimId: String(claimId)
+      });
+
+      try {
+        const receipt = await this.poidhEvm.acceptClaim(bountyId, claimId);
+
+        logger.success('EVM claim accepted', {
+          tx: receipt?.hash
+        });
+
+        this.activeBounty.status = 'completed';
+        this.activeBounty.winnerId = winner.id;
+        this.activeBounty.paymentSignature = receipt?.hash || 'UNKNOWN';
+        return true;
+      } catch (error) {
+        logger.error('EVM claim acceptance failed', {
+          error: error?.message || String(error)
+        });
+        return false;
+      }
+    }
+
     if (dryRunPayments) {
       logger.success('Dry-run payment: skipping SOL transfer', {
         recipient: winner.walletAddress,

@@ -77,7 +77,18 @@ export function loadOrCreateEvmWallet(opts = {}) {
 }
 
 export function connectEvmProvider() {
-  const rpcUrl = (process.env.EVM_RPC_URL || '').trim();
-  if (!rpcUrl) throw new Error('EVM_RPC_URL is required for POIDH_MODE=evm');
-  return new JsonRpcProvider(rpcUrl);
+  const explicit = (process.env.EVM_RPC_URL || '').trim();
+  if (explicit) return new JsonRpcProvider(explicit);
+
+  const network = (process.env.EVM_NETWORK || '').trim();
+  const fallbacks = {
+    'base-sepolia': 'https://sepolia.base.org',
+    'arbitrum-sepolia': 'https://sepolia-rollup.arbitrum.io/rpc',
+    base: 'https://mainnet.base.org',
+    arbitrum: 'https://arb1.arbitrum.io/rpc'
+  };
+
+  const url = fallbacks[network];
+  if (!url) throw new Error('EVM_RPC_URL is required for POIDH_MODE=evm');
+  return new JsonRpcProvider(url);
 }
