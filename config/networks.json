@@ -1,26 +1,58 @@
 {
-  "base": {
-    "name": "Base",
-    "chainId": 8453,
-    "rpcUrl": "https://mainnet.base.org",
-    "explorerUrl": "https://basescan.org",
-    "currency": "ETH",
-    "poidhContract": "0xb502c5856f7244dccdd0264a541cc25675353d39"
+  "mainnet": {
+    "base": {
+      "name": "Base",
+      "chainId": 8453,
+      "rpcUrl": "https://mainnet.base.org",
+      "poidhContract": "0xb502c5856f7244dccdd0264a541cc25675353d39",
+      "explorerUrl": "https://basescan.org",
+      "currency": "ETH",
+      "testnet": false,
+      "recommended": true
+    },
+    "arbitrum": {
+      "name": "Arbitrum One",
+      "chainId": 42161,
+      "rpcUrl": "https://arb1.arbitrum.io/rpc",
+      "poidhContract": "0x0aa50ce0d724cc28f8f7af4630c32377b4d5c27d",
+      "explorerUrl": "https://arbiscan.io",
+      "currency": "ETH",
+      "testnet": false,
+      "recommended": true
+    },
+    "degen": {
+      "name": "Degen Chain",
+      "chainId": 666666666,
+      "rpcUrl": "https://rpc.degen.tips",
+      "poidhContract": "0x2445BfFc6aB9EEc6C562f8D7EE325CddF1780814",
+      "explorerUrl": "https://explorer.degen.tips",
+      "currency": "DEGEN",
+      "testnet": false,
+      "recommended": false
+    }
   },
-  "arbitrum": {
-    "name": "Arbitrum One",
-    "chainId": 42161,
-    "rpcUrl": "https://arb1.arbitrum.io/rpc",
-    "explorerUrl": "https://arbiscan.io",
-    "currency": "ETH",
-    "poidhContract": "0x0aa50ce0d724cc28f8f7af4630c32377b4d5c27d"
-  },
-  "degen": {
-    "name": "Degen Chain",
-    "chainId": 666666666,
-    "rpcUrl": "https://rpc.degen.tips",
-    "explorerUrl": "https://explorer.degen.tips",
-    "currency": "DEGEN",
-    "poidhContract": "0x2445BfFc6aB9EEc6C562f8D7EE325CddF1780814"
+  "testnet": {
+    "base-sepolia": {
+      "name": "Base Sepolia",
+      "chainId": 84532,
+      "rpcUrl": "https://sepolia.base.org",
+      "poidhContract": "PLACEHOLDER_NEEDS_ACTUAL_ADDRESS",
+      "explorerUrl": "https://sepolia.basescan.org",
+      "currency": "ETH",
+      "testnet": true,
+      "faucet": "https://www.alchemy.com/faucets/base-sepolia",
+      "note": "Set POIDH_EVM_CONTRACT_ADDRESS env var with actual testnet contract"
+    },
+    "arbitrum-sepolia": {
+      "name": "Arbitrum Sepolia",
+      "chainId": 421614,
+      "rpcUrl": "https://sepolia-rollup.arbitrum.io/rpc",
+      "poidhContract": "PLACEHOLDER_NEEDS_ACTUAL_ADDRESS",
+      "explorerUrl": "https://sepolia.arbiscan.io",
+      "currency": "ETH",
+      "testnet": true,
+      "faucet": "https://faucet.quicknode.com/arbitrum/sepolia",
+      "note": "Set POIDH_EVM_CONTRACT_ADDRESS env var with actual testnet contract"
+    }
   }
 }

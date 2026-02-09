@@ -1,8 +1,13 @@
 import express from 'express';
 import cors from 'cors';
+import { createServer as createHttpServer } from 'http';
 
 import botRoutes from './routes/bot.js';
 import statusRoutes from './routes/status.js';
+import { BotWebSocket } from './websocket.js';
+import { Logger } from '../storage/Logger.js';
+
+export let botWS = null;
 
 export function createServer(opts = {}) {
   const app = express();
@@ -10,7 +15,7 @@ export function createServer(opts = {}) {
   app.use(cors());
   app.use(express.json({ limit: '2mb' }));
 
-  app.get('/health', (_req, res) => {
+  app.get('/api/health', (_req, res) => {
     res.json({ ok: true });
   });
 
@@ -21,11 +26,23 @@ export function createServer(opts = {}) {
 }
 
 export async function startServer(opts = {}) {
-  const port = Number.parseInt(process.env.API_PORT || String(opts.port || '8787'), 10);
+  const port = Number.parseInt(process.env.API_PORT || String(opts.port || '3001'), 10);
   const app = createServer(opts);
+  const logger = opts.logger || new Logger();
 
   return new Promise((resolve) => {
-    const server = app.listen(port, () => resolve({ app, server, port }));
+    const server = createHttpServer(app);
+
+    botWS = new BotWebSocket(server);
+    logger.info('WebSocket broadcaster initialized');
+
+    app.set('botWS', botWS);
+
+    server.listen(port, () => {
+      logger.info('API server running', { url: `http://localhost:${port}` });
+      logger.info('WebSocket available', { url: `ws://localhost:${port}` });
+      resolve({ app, server, port, botWS });
+    });
   });
 }
 

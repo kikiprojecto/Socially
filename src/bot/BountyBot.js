@@ -12,8 +12,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export class AutonomousBountyBot {
-  constructor(config) {
+  constructor(config, webSocket = null) {
     this.config = config;
+    this.webSocket = webSocket;
     this.logger = new Logger();
     this.wallet = null;
     this.contract = null;
@@ -69,6 +70,11 @@ export class AutonomousBountyBot {
     };
 
     this.logger.info('Bounty created', { bountyId: result.bountyId, tx: result.transactionHash });
+
+    if (this.webSocket) {
+      this.webSocket.onBountyCreated(this.activeBounty);
+    }
+
     return this.activeBounty;
   }
 
@@ -83,13 +89,19 @@ export class AutonomousBountyBot {
 
     try {
       const imageBuffer = await this.ipfs.fetchImage(claim.imageURI);
-      this.submissions.set(claim.claimId, {
+      const submission = {
         ...claim,
         imageBuffer,
         receivedAt: Date.now(),
         evaluated: false
-      });
+      };
+
+      this.submissions.set(claim.claimId, submission);
       this.logger.info('Claim stored', { claimId: claim.claimId });
+
+      if (this.webSocket) {
+        this.webSocket.onSubmissionReceived(submission);
+      }
     } catch (error) {
       this.logger.error('Failed to process claim', { claimId: claim.claimId, error: error?.message || String(error) });
     }
@@ -113,6 +125,10 @@ export class AutonomousBountyBot {
         });
 
         this.logger.info('Claim evaluated', { claimId, score: evaluation.total_score });
+
+        if (this.webSocket) {
+          this.webSocket.onEvaluationComplete({ claimId, claimer: submission.claimer, ...evaluation });
+        }
       } catch (error) {
         this.logger.error('Evaluation failed', { claimId, error: error?.message || String(error) });
       }
@@ -145,12 +161,21 @@ export class AutonomousBountyBot {
       timestamp: new Date().toISOString()
     });
 
+    if (this.webSocket) {
+      this.webSocket.onWinnerSelected(winner);
+    }
+
     return winner;
   }
 
   async payWinner(winner) {
     const result = await this.contract.acceptClaim(this.activeBounty.bountyId, winner.claimId);
     this.logger.info('Winner paid', { tx: result.transactionHash, explorerUrl: result.explorerUrl });
+
+    if (this.webSocket) {
+      this.webSocket.onPaymentSent({ winner, ...result });
+    }
+
     return result;
   }
 

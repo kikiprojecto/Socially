@@ -14,4 +14,24 @@ export class BotWebSocket {
       }
     }
   }
+
+  onBountyCreated(bounty) {
+    this.broadcast('BOUNTY_CREATED', { bounty, timestamp: Date.now() });
+  }
+
+  onSubmissionReceived(submission) {
+    this.broadcast('SUBMISSION_RECEIVED', { submission, timestamp: Date.now() });
+  }
+
+  onEvaluationComplete(evaluation) {
+    this.broadcast('EVALUATION_COMPLETE', { evaluation, timestamp: Date.now() });
+  }
+
+  onWinnerSelected(winner) {
+    this.broadcast('WINNER_SELECTED', { winner, timestamp: Date.now() });
+  }
+
+  onPaymentSent(result) {
+    this.broadcast('PAYMENT_SENT', { result, timestamp: Date.now() });
+  }
 }

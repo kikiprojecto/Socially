@@ -1,3 +1,206 @@
+@windsurf Integrate WebSocket into API server for real-time updates:
+
+STEP 1: UPDATE src/api/server.js
+
+Add imports at top:
+import { createServer } from 'http';
+import { BotWebSocket } from './websocket.js';
+
+Replace the app.listen section with:
+// Create HTTP server for WebSocket support
+const server = createServer(app);
+
+// Initialize WebSocket broadcaster
+const botWS = new BotWebSocket(server);
+logger.info('WebSocket broadcaster initialized');
+
+// Make WebSocket available to routes and bot
+app.set('botWS', botWS);
+export { botWS };
+
+// Start server
+const PORT = process.env.API_PORT || 3001;
+server.listen(PORT, () => {
+  logger.info(`🚀 API server running on http://localhost:${PORT}`);
+  logger.info(`🔌 WebSocket available at ws://localhost:${PORT}`);
+});
+
+STEP 2: UPDATE src/api/routes/bot.js
+
+Import at top:
+import { getBotInstance } from '../../index.js';
+
+In POST /api/bot/start endpoint, add:
+const botWS = req.app.get('botWS');
+if (botWS) {
+  botWS.broadcast('BOT_STARTED', { timestamp: Date.now() });
+}
+
+In POST /api/bot/stop endpoint, add:
+const botWS = req.app.get('botWS');
+if (botWS) {
+  botWS.broadcast('BOT_STOPPED', { timestamp: Date.now() });
+}
+
+STEP 3: UPDATE src/bot/BountyBot.js
+
+In constructor, add parameter:
+constructor(config, webSocket = null) {
+  this.config = config;
+  this.webSocket = webSocket;
+  // ... rest of constructor
+}
+
+In createBounty method after success, add:
+if (this.webSocket) {
+  this.webSocket.onBountyCreated(this.activeBounty);
+}
+
+In handleNewClaim method after processing, add:
+if (this.webSocket) {
+  this.webSocket.onSubmissionReceived(submission);
+}
+
+In evaluateSubmissions method after each evaluation, add:
+if (this.webSocket) {
+  this.webSocket.onEvaluationComplete(evaluation);
+}
+
+In selectWinner method after selection, add:
+if (this.webSocket) {
+  this.webSocket.onWinnerSelected(winner);
+}
+
+In payWinner method after payment, add:
+if (this.webSocket) {
+  this.webSocket.onPaymentSent(result);
+}
+
+STEP 4: UPDATE src/index.js
+
+Import server:
+import { botWS } from './api/server.js';
+
+Pass WebSocket to bot:
+const bot = new AutonomousBountyBot(config, botWS);
+
+VERIFY:
+- npm start shows "WebSocket available" message
+- No connection errors
+- Events broadcast correctly
+
+
+
+
+@windsurf Add comprehensive test coverage:
+
+STEP 1: CREATE tests/e2e/ directory
+mkdir -p tests/e2e
+
+STEP 2: CREATE tests/unit/DecisionEngine.test.js
+
+import { describe, it, expect } from '@jest/globals';
+import { DecisionEngine } from '../../src/ai/DecisionEngine.js';
+
+describe('DecisionEngine', () => {
+  it('should select highest scoring submission', () => {
+    const engine = new DecisionEngine({ threshold: 70 });
+    
+    const evaluations = [
+      { claimId: '1', total_score: 92, claimer: '0xabc' },
+      { claimId: '2', total_score: 78, claimer: '0xdef' },
+      { claimId: '3', total_score: 65, claimer: '0xghi' }
+    ];
+    
+    const winner = engine.selectWinner(evaluations);
+    
+    expect(winner).toBeDefined();
+    expect(winner.claimId).toBe('1');
+    expect(winner.total_score).toBe(92);
+  });
+  
+  it('should return null if no submissions meet threshold', () => {
+    const engine = new DecisionEngine({ threshold: 70 });
+    
+    const evaluations = [
+      { claimId: '1', total_score: 65, claimer: '0xabc' },
+      { claimId: '2', total_score: 60, claimer: '0xdef' }
+    ];
+    
+    const winner = engine.selectWinner(evaluations);
+    expect(winner).toBeNull();
+  });
+});
+
+STEP 3: CREATE tests/unit/IPFSClient.test.js
+
+import { describe, it, expect } from '@jest/globals';
+import { IPFSClient } from '../../src/storage/IPFSClient.js';
+
+describe('IPFSClient', () => {
+  it('should convert ipfs:// to gateway URL', () => {
+    const client = new IPFSClient();
+    const ipfsUrl = 'ipfs://QmTest123';
+    const gatewayUrl = client.toGatewayUrl(ipfsUrl);
+    
+    expect(gatewayUrl).toBe('https://gateway.pinata.cloud/ipfs/QmTest123');
+  });
+  
+  it('should return http URLs unchanged', () => {
+    const client = new IPFSClient();
+    const httpUrl = 'https://example.com/image.jpg';
+    const result = client.toGatewayUrl(httpUrl);
+    
+    expect(result).toBe(httpUrl);
+  });
+});
+
+STEP 4: CREATE tests/e2e/full-flow.test.js
+
+import { describe, it, expect } from '@jest/globals';
+
+describe('E2E Full Flow', () => {
+  it('should describe complete bounty cycle', () => {
+    // This is a documentation test showing the expected flow
+    const expectedFlow = [
+      '1. Initialize bot with wallet',
+      '2. Create bounty on-chain',
+      '3. Monitor for submissions',
+      '4. Evaluate with AI',
+      '5. Select winner',
+      '6. Pay winner automatically'
+    ];
+    
+    expect(expectedFlow).toHaveLength(6);
+    expect(expectedFlow[0]).toContain('Initialize');
+    expect(expectedFlow[5]).toContain('Pay winner');
+  });
+  
+  // Note: Actual E2E test requires funded wallet + testnet
+  // Run manually with: npm run test:integration
+});
+
+STEP 5: UPDATE package.json scripts
+
+Add to scripts section:
+"test:unit": "NODE_OPTIONS=--experimental-vm-modules jest tests/unit/",
+"test:e2e": "NODE_OPTIONS=--experimental-vm-modules jest tests/e2e/",
+"test:coverage": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+
+VERIFY:
+- npm run test:unit passes
+- npm run test:e2e passes
+- npm test passes all tests
+- Coverage >70%
+
+
+
+@windsurf COMPLETELY REPLACE README.md with professional version:
+
+DELETE entire current README.md content (all 3500+ lines).
+
+CREATE NEW README.md with EXACTLY this:
+
 # 🤖 Socially - Autonomous AI Bounty Bot for poidh
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -347,3 +550,176 @@ VERIFY:
 - Structure matches template
 - No false claims
 - <2000 lines total
+
+
+
+
+
+
+@windsurf Update network configuration for clarity:
+
+STEP 1: UPDATE config/networks.json
+
+Replace testnet entries with this clear structure:
+
+{
+  "mainnet": {
+    "base": {
+      "name": "Base",
+      "chainId": 8453,
+      "rpcUrl": "https://mainnet.base.org",
+      "poidhContract": "0xb502c5856f7244dccdd0264a541cc25675353d39",
+      "explorerUrl": "https://basescan.org",
+      "currency": "ETH",
+      "testnet": false,
+      "recommended": true
+    },
+    "arbitrum": {
+      "name": "Arbitrum One",
+      "chainId": 42161,
+      "rpcUrl": "https://arb1.arbitrum.io/rpc",
+      "poidhContract": "0x0aa50ce0d724cc28f8f7af4630c32377b4d5c27d",
+      "explorerUrl": "https://arbiscan.io",
+      "currency": "ETH",
+      "testnet": false,
+      "recommended": true
+    },
+    "degen": {
+      "name": "Degen Chain",
+      "chainId": 666666666,
+      "rpcUrl": "https://rpc.degen.tips",
+      "poidhContract": "0x2445BfFc6aB9EEc6C562f8D7EE325CddF1780814",
+      "explorerUrl": "https://explorer.degen.tips",
+      "currency": "DEGEN",
+      "testnet": false,
+      "recommended": false
+    }
+  },
+  "testnet": {
+    "base-sepolia": {
+      "name": "Base Sepolia",
+      "chainId": 84532,
+      "rpcUrl": "https://sepolia.base.org",
+      "poidhContract": "PLACEHOLDER_NEEDS_ACTUAL_ADDRESS",
+      "explorerUrl": "https://sepolia.basescan.org",
+      "currency": "ETH",
+      "testnet": true,
+      "faucet": "https://www.alchemy.com/faucets/base-sepolia",
+      "note": "Set POIDH_EVM_CONTRACT_ADDRESS env var with actual testnet contract"
+    },
+    "arbitrum-sepolia": {
+      "name": "Arbitrum Sepolia",
+      "chainId": 421614,
+      "rpcUrl": "https://sepolia-rollup.arbitrum.io/rpc",
+      "poidhContract": "PLACEHOLDER_NEEDS_ACTUAL_ADDRESS",
+      "explorerUrl": "https://sepolia.arbiscan.io",
+      "currency": "ETH",
+      "testnet": true,
+      "faucet": "https://faucet.quicknode.com/arbitrum/sepolia",
+      "note": "Set POIDH_EVM_CONTRACT_ADDRESS env var with actual testnet contract"
+    }
+  }
+}
+
+STEP 2: UPDATE src/blockchain/networks.js
+
+Add better error messages:
+
+export function getNetworkConfig(networkName) {
+  const config = NETWORKS[networkName];
+  if (!config) {
+    const available = Object.keys(NETWORKS).join(', ');
+    throw new Error(
+      `Unknown network: ${networkName}
+      
+Available networks: ${available}
+
+For mainnet: Use 'base' (recommended) or 'arbitrum'
+For testnet: Use 'base-sepolia' or 'arbitrum-sepolia'
+
+Note: Testnet requires setting POIDH_EVM_CONTRACT_ADDRESS in .env
+Get faucet ETH from: https://www.alchemy.com/faucets/base-sepolia`
+    );
+  }
+  
+  // Check for testnet placeholder
+  if (config.poidhContract === 'PLACEHOLDER_NEEDS_ACTUAL_ADDRESS' && 
+      !process.env.POIDH_EVM_CONTRACT_ADDRESS) {
+    throw new Error(
+      `Testnet ${networkName} requires contract address!
+      
+Set in .env:
+POIDH_EVM_CONTRACT_ADDRESS=0xYourTestnetContractAddress
+
+Or use mainnet: NETWORK=base`
+    );
+  }
+  
+  // Use env override for testnets
+  if (config.testnet && process.env.POIDH_EVM_CONTRACT_ADDRESS) {
+    config.poidhContract = process.env.POIDH_EVM_CONTRACT_ADDRESS;
+  }
+  
+  return config;
+}
+
+STEP 3: UPDATE .env.example
+
+Add clear network section:
+
+# ========================================
+# NETWORK CONFIGURATION
+# ========================================
+
+# Choose network (required)
+# Mainnet options: base (recommended), arbitrum, degen
+# Testnet options: base-sepolia, arbitrum-sepolia
+NETWORK=base
+
+# For testnets only: Provide actual poidh contract address
+# (Leave empty for mainnet - addresses are built-in)
+POIDH_EVM_CONTRACT_ADDRESS=
+
+# ========================================
+# RECOMMENDATIONS
+# ========================================
+# - Start with NETWORK=base-sepolia for testing
+# - Get testnet ETH: https://www.alchemy.com/faucets/base-sepolia
+# - Deploy to NETWORK=base for production
+# - Base has lowest gas fees and best poidh support
+
+VERIFY:
+- Clear error messages when wrong network
+- Testnet contract address configurable
+- Mainnet addresses built-in
+- Help text shows available networks
+
+
+
+
+✅ FINAL VERIFICATION CHECKLIST
+# 1. All tests pass
+npm test
+# Expected: All tests passing ✅
+
+# 2. Linting clean
+npm run lint
+# Expected: No errors ✅
+
+# 3. Server starts with WebSocket
+npm start
+# Expected: "WebSocket available at ws://localhost:3001" ✅
+
+# 4. README is professional
+head -100 README.md
+# Expected: Badges, clear structure, <2000 lines ✅
+
+# 5. Network config clear
+cat config/networks.json | grep recommended
+# Expected: base and arbitrum marked as recommended ✅
+
+# 6. Test coverage adequate
+npm run test:coverage
+# Expected: >70% coverage ✅
+
+

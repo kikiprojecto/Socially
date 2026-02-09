@@ -12,7 +12,7 @@ export const NETWORKS = {
     name: 'Base Sepolia',
     chainId: 84532,
     rpcUrl: 'https://sepolia.base.org',
-    poidhContract: null,
+    poidhContract: 'PLACEHOLDER_NEEDS_ACTUAL_ADDRESS',
     explorerUrl: 'https://sepolia.basescan.org',
     currency: 'ETH',
     testnet: true
@@ -30,7 +30,7 @@ export const NETWORKS = {
     name: 'Arbitrum Sepolia',
     chainId: 421614,
     rpcUrl: 'https://sepolia-rollup.arbitrum.io/rpc',
-    poidhContract: null,
+    poidhContract: 'PLACEHOLDER_NEEDS_ACTUAL_ADDRESS',
     explorerUrl: 'https://sepolia.arbiscan.io',
     currency: 'ETH',
     testnet: true
@@ -49,16 +49,37 @@ export const NETWORKS = {
 export function getNetworkConfig(networkName) {
   const config = NETWORKS[networkName];
   if (!config) {
-    throw new Error(`Unknown network: ${networkName}. Available: ${Object.keys(NETWORKS).join(', ')}`);
+    const available = Object.keys(NETWORKS).join(', ');
+    throw new Error(
+      `Unknown network: ${networkName}
+
+Available networks: ${available}
+
+For mainnet: Use 'base' (recommended) or 'arbitrum'
+For testnet: Use 'base-sepolia' or 'arbitrum-sepolia'
+
+Note: Testnet requires setting POIDH_EVM_CONTRACT_ADDRESS in .env
+Get faucet ETH from: https://www.alchemy.com/faucets/base-sepolia`
+    );
   }
 
-  if (!config.poidhContract) {
-    const override = (process.env.POIDH_EVM_CONTRACT_ADDRESS || '').trim();
-    if (!override) {
-      throw new Error(`Missing poidh contract address for ${networkName}. Set POIDH_EVM_CONTRACT_ADDRESS.`);
-    }
+  const override = (process.env.POIDH_EVM_CONTRACT_ADDRESS || '').trim();
+
+  if (config.poidhContract === 'PLACEHOLDER_NEEDS_ACTUAL_ADDRESS' && !override) {
+    throw new Error(
+      `Testnet ${networkName} requires contract address!
+
+Set in .env:
+POIDH_EVM_CONTRACT_ADDRESS=0xYourTestnetContractAddress
+
+Or use mainnet: NETWORK=base`
+    );
+  }
+
+  if (config.testnet && override) {
     return { ...config, poidhContract: override };
   }
+
   return config;
 }
 
