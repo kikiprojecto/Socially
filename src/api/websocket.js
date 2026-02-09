@@ -1,5 +1,17 @@
+import { WebSocketServer } from 'ws';
+
 export class BotWebSocket {
-  constructor() {
-    throw new Error('BotWebSocket is not enabled in safe mode (use /events SSE endpoint)');
+  constructor(server, opts = {}) {
+    this.path = opts.path || '/ws';
+    this.wss = new WebSocketServer({ server, path: this.path });
+  }
+
+  broadcast(event, data) {
+    const payload = JSON.stringify({ event, data });
+    for (const client of this.wss.clients) {
+      if (client.readyState === 1) {
+        client.send(payload);
+      }
+    }
   }
 }

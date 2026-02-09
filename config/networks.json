@@ -1,0 +1,26 @@
+{
+  "base": {
+    "name": "Base",
+    "chainId": 8453,
+    "rpcUrl": "https://mainnet.base.org",
+    "explorerUrl": "https://basescan.org",
+    "currency": "ETH",
+    "poidhContract": "0xb502c5856f7244dccdd0264a541cc25675353d39"
+  },
+  "arbitrum": {
+    "name": "Arbitrum One",
+    "chainId": 42161,
+    "rpcUrl": "https://arb1.arbitrum.io/rpc",
+    "explorerUrl": "https://arbiscan.io",
+    "currency": "ETH",
+    "poidhContract": "0x0aa50ce0d724cc28f8f7af4630c32377b4d5c27d"
+  },
+  "degen": {
+    "name": "Degen Chain",
+    "chainId": 666666666,
+    "rpcUrl": "https://rpc.degen.tips",
+    "explorerUrl": "https://explorer.degen.tips",
+    "currency": "DEGEN",
+    "poidhContract": "0x2445BfFc6aB9EEc6C562f8D7EE325CddF1780814"
+  }
+}

@@ -14,35 +14,24 @@ if ($Help) {
 ╚════════════════════════════════════════════╝
 
 USAGE:
-  .\startup.ps1              Start bot (requires ollama already running)
+  .\startup.ps1              Start bot
   .\startup.ps1 -Setup       Run setup wizard first
   .\startup.ps1 -Help        Show this help
 
 DESCRIPTION:
-  This script starts the Socially bot. It does NOT start OLLAMA.
-  You must start OLLAMA first in a separate terminal:
-  
-  PowerShell Terminal 1:
-    ollama serve
-  
-  PowerShell Terminal 2:
-    .\startup.ps1
+  This script starts the Socially bot.
 
 REQUIREMENTS:
   - Node.js v18+
-  - OLLAMA installed and running (ollama serve)
   - .env file configured
   - npm install completed
 
 NEXT STEPS:
-  1. Terminal 1: ollama serve
-  2. Terminal 2: .\startup.ps1
-  3. Monitor logs in logs/ directory
+  1. .\startup.ps1
+  2. Monitor logs in logs/ directory
 
 FOR MORE INFO:
-  - Setup guide: SETUP_WITH_OLLAMA.md
-  - Quick reference: QUICK_REFERENCE.md
-  - Architecture: OLLAMA_INTEGRATION.md
+  - See .env.example for configuration
 
 "@
     exit 0
@@ -70,18 +59,6 @@ if ($LASTEXITCODE -eq 0) {
     exit 1
 }
 
-# Check OLLAMA connection
-Write-Host "Checking OLLAMA connection..." -ForegroundColor $Info
-try {
-    $response = curl -s http://localhost:11434/api/tags -ErrorAction Stop
-    Write-Host "✓ OLLAMA running at http://localhost:11434" -ForegroundColor $Success
-} catch {
-    Write-Host "✗ Cannot connect to OLLAMA!" -ForegroundColor $Error
-    Write-Host "Please start OLLAMA first:" -ForegroundColor $Warning
-    Write-Host "  ollama serve" -ForegroundColor $Warning
-    exit 1
-}
-
 # Check .env
 Write-Host "Checking configuration..." -ForegroundColor $Info
 if (Test-Path .env) {
@@ -89,11 +66,11 @@ if (Test-Path .env) {
 } else {
     Write-Host "✗ .env file not found!" -ForegroundColor $Error
     Write-Host "Creating from template..." -ForegroundColor $Warning
-    if (Test-Path poidh_env_example.sh) {
-        Copy-Item poidh_env_example.sh .env
+    if (Test-Path .env.example) {
+        Copy-Item .env.example .env
         Write-Host "✓ .env created (edit with your settings)" -ForegroundColor $Success
     } else {
-        Write-Host "✗ Cannot find poidh_env_example.sh" -ForegroundColor $Error
+        Write-Host "✗ Cannot find .env.example" -ForegroundColor $Error
         exit 1
     }
 }

@@ -153,7 +153,7 @@ function startBot(envOverrides = {}) {
   lastExitSignal = null;
   botStartedAt = new Date().toISOString();
 
-  botProc = spawn(process.execPath, ['src/main.js'], {
+  botProc = spawn(process.execPath, ['src/index.js'], {
     cwd: PROJECT_ROOT,
     env: {
       ...process.env,

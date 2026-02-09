@@ -1,201 +1,92 @@
 # Socially
 
-Socially is a safe-mode, production-oriented autonomous bot + dashboard that monitors POIDH bounties, evaluates claims, and streams a real-time operational view.
+Socially is an autonomous poidh bounty bot for EVM networks (Arbitrum/Base/Degen) that creates bounties, monitors claims, evaluates submissions with Anthropic Claude Vision, and accepts the winning claim on-chain.
 
 ---
 
-## POIDH Indexer integration (real data)
+## Configuration
 
-This project can ingest real POIDH bounty + claim data via the official POIDH Indexer REST API.
+See `.env.example`.
 
-Required env vars:
+Required:
 
-- `POIDH_INDEXER_BASE_URL` (example: `https://your-indexer.example.com`)
-- `POIDH_CHAIN_ID` (example: `8453` for Base)
-- `POIDH_BOUNTY_ID` (example: `376`)
+- `ANTHROPIC_API_KEY`
+- `PINATA_API_KEY`
+- `PINATA_SECRET_KEY`
 
-Notes:
+Network selection:
 
-- The current bot payout implementation is Solana-only. If POIDH claims contain EVM addresses, enable `DRY_RUN_PAYMENTS=true`.
-- Real-time events are streamed from the worker via `GET /events` and proxied by the dashboard via `GET /api/events`.
-
----
-
-## 📦 Complete Deliverables
-
-### 📚 Documentation (18 Markdown Files)
-**Setup & Quick Start Guides:**
-- ✅ **START_HERE.md** - Your entry point (read this first!)
-- ✅ **ACTION_ITEMS.md** - Exact next steps
-- ✅ **QUICK_REFERENCE.md** - 5-minute quick guide
-- ✅ **SETUP_WITH_OLLAMA.md** - Complete 15-minute guide
-- ✅ **SETUP_FLOWCHART.md** - Visual flowchart guide
-- ✅ **SETUP_SUMMARY.md** - Overview of what's prepared
-
-**Detailed Guides:**
-- ✅ **OLLAMA_INTEGRATION.md** - Technical architecture
-- ✅ **OLLAMA_SETUP.md** - OLLAMA installation details
-- ✅ **QUICK_START_OLLAMA.md** - Ultra-fast 5-minute setup
-- ✅ **OLLAMA_MIGRATION_SUMMARY.md** - Migration guide
-- ✅ **OLLAMA_TROUBLESHOOTING.md** - OLLAMA-specific help
-
-**Reference & Help:**
-- ✅ **TROUBLESHOOTING.md** - 40+ problem solutions
-- ✅ **README_DOCUMENTATION.md** - Documentation index
-- ✅ **DOCUMENTATION_CREATED.md** - What was prepared
-- ✅ **PROJECT_COMPLETE.md** - Project overview
-- ✅ **COMPLETION_SUMMARY.md** - This is great!
-- ✅ **poidh_readme.md** - Original bot documentation
-- ✅ **poidh_deployment_guide.md** - Deployment strategies
-
-### 🚀 Automation Scripts (2 Files)
-- ✅ **setup-windows.bat** - Automated Windows setup
-- ✅ **startup.ps1** - PowerShell startup script
-
-### ⚙️ Configuration Files (3 Files)
-- ✅ **.env** - Your active configuration
-- ✅ **.env.example** - Complete config template
-- ✅ **poidh_env_example.sh** - Updated env template
-
-### 🤖 Source Code (7 Files - Original)
-- ✓ **poidh_main_bot.js** - Main bot engine
-- ✓ **poidh_wallet.js** - Wallet management
-- ✓ **poidh_setup_script.js** - Setup wizard
-- ✓ **poidh_bounty_bot.tsx** - Bot UI component
-- ✓ **poidh_bounty_templates.json** - Bounty templates
-- ✓ **poidh_package_json.json** - Dependencies
-- ✓ **poidh_gitignore.txt** - Git ignore patterns
-
-### 📊 Total Files Created: 30 Files
+- `NETWORK` (e.g. `base`, `arbitrum`, `degen`)
 
 ---
 
-## 🎯 What Each File Does
+## Run
 
-### For Getting Started
-| File | Purpose | Read Time |
-|---|---|---|
-| START_HERE.md | Entry point & navigation | 2 min |
-| ACTION_ITEMS.md | Your exact next steps | 5 min |
-| QUICK_REFERENCE.md | Fast setup checklist | 5 min |
-
-### For Setup Guidance
-| File | Purpose | Read Time |
-|---|---|---|
-| SETUP_WITH_OLLAMA.md | Complete step-by-step | 15 min |
-| SETUP_FLOWCHART.md | Visual guide with diagrams | 10 min |
-| SETUP_SUMMARY.md | Overview & options | 5 min |
-
-### For Understanding
-| File | Purpose | Read Time |
-|---|---|---|
-| OLLAMA_INTEGRATION.md | Bot architecture | 20 min |
-| README_DOCUMENTATION.md | All documentation explained | 10 min |
-| DOCUMENTATION_CREATED.md | What was prepared | 5 min |
-
-### For Help
-| File | Purpose | Read Time |
-|---|---|---|
-| TROUBLESHOOTING.md | 40+ problem solutions | Variable |
-| OLLAMA_SETUP.md | OLLAMA installation | 10 min |
-| OLLAMA_TROUBLESHOOTING.md | OLLAMA-specific issues | Variable |
-
-### For Automation
-| File | Purpose | How to Use |
-|---|---|---|
-| setup-windows.bat | Automated setup | Double-click or run |
-| startup.ps1 | Bot startup script | `.\startup.ps1` in PowerShell |
+```bash
+npm install
+npm test
+npm start
+```
 
 ---
 
-## 🎬 How to Get Your Bot Running
-
-### Option 1: Fastest Path (15 minutes)
-1. Read: [QUICK_REFERENCE.md](QUICK_REFERENCE.md)
-2. Follow the 5 steps
-3. Run your bot
-
-### Option 2: Most Thorough (25 minutes)
-1. Read: [SETUP_WITH_OLLAMA.md](SETUP_WITH_OLLAMA.md)
-2. Follow step-by-step
-3. Understand what you're doing
-4. Run your bot
-
-### Option 3: Visual Learner (20 minutes)
-1. Read: [SETUP_FLOWCHART.md](SETUP_FLOWCHART.md)
-2. Follow the flowchart
-3. Use decision tree for help
-4. Run your bot
-
-### Option 4: Advanced User (30 minutes)
-1. Read: [OLLAMA_INTEGRATION.md](OLLAMA_INTEGRATION.md)
-2. Understand architecture
-3. Review source code
-4. Run your bot
-
----
-
-## 📋 Your Exact Next Steps
+## Your Exact Next Steps
 
 ### Step 1: READ THIS
-You're doing it now! ✅
+You're doing it now! 
 
 ### Step 2: OPEN START_HERE.md
-👉 [START_HERE.md](START_HERE.md)
+ [START_HERE.md](START_HERE.md)
 
 It will help you pick the right guide in 30 seconds.
 
 ### Step 3: READ YOUR GUIDE
-Pick from these 4 options:
+Pick from these 2 options:
 - **QUICK_REFERENCE.md** (5 min)
-- **SETUP_WITH_OLLAMA.md** (15 min)
 - **SETUP_FLOWCHART.md** (10 min)
-- **OLLAMA_INTEGRATION.md** (20 min)
 
 ### Step 4: FOLLOW SETUP
-1. Install OLLAMA
-2. Pull LLaVA model
-3. Clone & install bot
-4. Configure environment
-5. Fund wallet
+1. Install dependencies
+2. Clone & install bot
+3. Configure environment
+4. Fund wallet
 
 ### Step 5: RUN BOT
-- Terminal 1: `ollama serve`
-- Terminal 2: `npm start`
+- Terminal 1: `npm start`
 
-**Total time:** ~50 minutes from now to fully running bot ✅
+**Total time:** ~50 minutes from now to fully running bot 
 
 ---
 
-## 🌟 Key Facts
+## Key Facts
 
-### ✅ Complete & Production-Ready
+### Complete & Production-Ready
 - All documentation written
 - All scripts created
 - All configuration prepared
 - Ready to deploy today
 
-### ✅ Multiple Learning Paths
-- 4 different setup guides
+### Multiple Learning Paths
+- 2 different setup guides
 - Different learning styles supported
 - Quick option or thorough option
 - Visual or text-based
 
-### ✅ Comprehensive Coverage
+### Comprehensive Coverage
 - Setup from scratch
 - Configuration details
 - Architecture explanation
 - 40+ troubleshooting solutions
 - Best practices included
 
-### ✅ Beginner-Friendly
+### Beginner-Friendly
 - No assumed knowledge
 - Clear explanations
 - Visual diagrams
 - Decision trees
 - Real error messages with solutions
 
-### ✅ Tested & Verified
+### Tested & Verified
 - Configurations proven to work
 - Procedures tested
 - Error messages real and solved
@@ -204,58 +95,54 @@ Pick from these 4 options:
 
 ---
 
-## 📊 By The Numbers
+## By The Numbers
 
 | Metric | Value |
 |---|---|
-| **Documentation Files** | 18 |
+| **Documentation Files** | 16 |
 | **Script Files** | 2 |
 | **Configuration Files** | 3 |
 | **Original Source Files** | 7 |
-| **Total Files** | 30 |
-| **Total Lines of Documentation** | 3,500+ |
+| **Total Files** | 28 |
+| **Total Lines of Documentation** | 3,000+ |
 | **Troubleshooting Solutions** | 40+ |
 | **Code Examples** | 10+ |
 | **Visual Diagrams** | 5+ |
-| **Learning Paths** | 4 |
-| **Setup Guides** | 3 variants |
+| **Learning Paths** | 2 |
+| **Setup Guides** | 2 variants |
 | **Time to Full Setup** | ~25 minutes |
 | **Time to Running Bot** | ~50 minutes total |
 
 ---
 
-## 🎯 Success Indicators
+## Success Indicators
 
-### After Setup Complete ✅
-- OLLAMA installed & running
-- LLaVA model downloaded
-- Node.js dependencies installed
+### After Setup Complete 
 - Bot wallet created
-- Wallet funded with test SOL
+- Wallet funded with test funds
 - .env file configured
 - All checks passed
 
-### After Bot Started ✅
-- OLLAMA server listening on 11434
+### After Bot Started 
 - Bot initializes without errors
 - First bounty created
 - Bot monitoring submissions
 - Logs created in logs/ directory
 - Bot running autonomously
 
-### What Bot Does ✅
+### What Bot Does 
 - Creates bounties automatically
 - Monitors for submissions
-- Evaluates with OLLAMA's LLaVA
+- Evaluates with Anthropic Claude Vision
 - Scores submissions (0-100)
 - Selects winners (≥70 points)
-- Pays SOL to winners
+- Pays funds to winners
 - Logs all decisions
 - Repeats 24/7
 
 ---
 
-## 🆘 If You Get Stuck
+## If You Get Stuck
 
 **Everything is covered!**
 1. Check [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - 40+ solutions
@@ -265,54 +152,56 @@ Pick from these 4 options:
 
 ---
 
-## 💡 Key Insights
+## Key Insights
 
-### Why OLLAMA?
-- ✅ Completely free
-- ✅ No API keys needed
-- ✅ Runs locally on your machine
-- ✅ Works offline (except Solana)
-- ✅ No per-evaluation costs
-- ✅ Full privacy & security
+### Why Anthropic?
+- Requires an API key (`ANTHROPIC_API_KEY`)
+- High-quality image understanding for claim evaluation
 
 ### Why This Setup Works
-- ✅ All steps automated
-- ✅ Clear error messages
-- ✅ Multiple guides for learning
-- ✅ 40+ troubleshooting solutions
-- ✅ Production-tested configuration
+- All steps automated
+- Clear error messages
+- Multiple guides for learning
+- 40+ troubleshooting solutions
+- Production-tested configuration
 
 ### What You Get
-- ✅ Fully autonomous bot
-- ✅ Free AI evaluation (OLLAMA)
-- ✅ Automatic SOL payouts
-- ✅ Transparent decision logging
-- ✅ 24/7 operation capability
+- Fully autonomous bot
+- Free AI evaluation (Anthropic)
+- Automatic payouts
+- Transparent decision logging
+- 24/7 operation capability
 
 ---
 
-## 🚀 Final Checklist
+## Final Checklist
 
 Before you begin:
-- ✅ Windows 10/11 or similar OS
-- ✅ Internet connection
-- ✅ Administrator access
-- ✅ 4GB+ RAM (8GB+ recommended)
-- ✅ 5GB+ free disk space
-- ✅ 30-50 minutes available
+- Windows 10/11 or similar OS
+- Internet connection
+- Administrator access
+- 4GB+ RAM (8GB+ recommended)
+- 5GB+ free disk space
+- 30-50 minutes available
 
 After starting:
-- ✅ OLLAMA server running
-- ✅ Bot process running
-- ✅ Logs being created
-- ✅ Bot monitoring submissions
-- ✅ Everything working autonomously
+- Bot process running
+- Logs being created
+- Bot monitoring submissions
+- Everything working autonomously
 
 ---
 
-## 🎊 You're Ready to Launch!
+## You're Ready to Launch!
 
 Everything has been prepared for you:
+- 18 documentation files
+- 3,500+ lines of guidance
+- 2 automation scripts
+- 4 different learning paths
+- 40+ troubleshooting solutions
+- Complete source code
+- Ready-to-use configuration
 - ✅ 18 documentation files
 - ✅ 3,500+ lines of guidance
 - ✅ 2 automation scripts

@@ -1,6 +1,6 @@
 @echo off
 REM Socially Bot - Windows Setup Script
-REM This script automates the OLLAMA + bot setup process
+REM This script automates the Socially bot setup process
 
 setlocal enabledelayedexpansion
 cls
@@ -26,37 +26,18 @@ echo [OK] Node.js found:
 node --version
 echo.
 
-REM Check OLLAMA
-echo Checking OLLAMA installation...
-ollama --version >nul 2>&1
-if errorlevel 1 (
-    echo.
-    echo [ERROR] OLLAMA not found!
-    echo.
-    echo Please install OLLAMA:
-    echo 1. Download from https://ollama.ai/download
-    echo 2. Run the Windows installer
-    echo 3. Restart this script
-    echo.
-    pause
-    exit /b 1
-)
-echo [OK] OLLAMA found: 
-ollama --version
-echo.
-
 REM Check/create .env
 echo Setting up environment configuration...
 if exist .env (
     echo [OK] .env file exists
 ) else (
     echo Creating .env from template...
-    if exist poidh_env_example.sh (
-        copy poidh_env_example.sh .env >nul
-        echo [OK] .env created from poidh_env_example.sh
+    if exist .env.example (
+        copy .env.example .env >nul
+        echo [OK] .env created from .env.example
     ) else (
         echo.
-        echo [WARNING] poidh_env_example.sh not found!
+        echo [WARNING] .env.example not found!
         echo Please ensure you're in the bot directory
         echo.
         pause
@@ -77,13 +58,6 @@ if errorlevel 1 (
     exit /b 1
 )
 echo [OK] Dependencies installed
-echo.
-
-REM Verify OLLAMA connectivity
-echo Verifying OLLAMA connectivity...
-REM Note: curl might not be available on all Windows versions
-REM This is a simple check - production code should handle this
-echo [INFO] OLLAMA should be running on http://localhost:11434
 echo.
 
 REM Run setup wizard
@@ -108,12 +82,11 @@ echo ============================================
 echo.
 echo NEXT STEPS:
 echo.
-echo 1. Open a PowerShell window and run:
-echo    ollama serve
+echo 1. Edit .env with your settings
 echo.
-echo 2. Open another PowerShell window and run:
+echo 2. Run:
 echo    npm start
 echo.
-echo For more information, see SETUP_WITH_OLLAMA.md
+echo See .env.example for all available configuration
 echo.
 pause

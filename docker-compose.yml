@@ -7,11 +7,13 @@ services:
     environment:
       - WORKER_PORT=8787
       - WORKER_TOKEN=${WORKER_TOKEN}
-      - SOLANA_NETWORK=${SOLANA_NETWORK}
-      - OLLAMA_API_URL=${OLLAMA_API_URL}
-      - OLLAMA_MODEL=${OLLAMA_MODEL}
-      - DEMO_MODE=${DEMO_MODE}
-      - DRY_RUN_PAYMENTS=${DRY_RUN_PAYMENTS}
+      - NETWORK=${NETWORK}
+      - EVM_NETWORK=${EVM_NETWORK}
+      - EVM_RPC_URL=${EVM_RPC_URL}
+      - POIDH_EVM_CONTRACT_ADDRESS=${POIDH_EVM_CONTRACT_ADDRESS}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - PINATA_API_KEY=${PINATA_API_KEY}
+      - PINATA_SECRET_KEY=${PINATA_SECRET_KEY}
     volumes:
       - ./logs:/app/logs
     restart: unless-stopped

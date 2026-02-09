@@ -36,9 +36,8 @@ This file is a template for preparing a bounty claim package.
 
 ### 5) Payment
 
-- Transaction signature + Solscan link (if not dry-run)
-- Or show `DRY_RUN` flow if using `DRY_RUN_PAYMENTS=true`
-- If POIDH claim addresses are EVM addresses, attach evidence of `DRY_RUN_PAYMENTS=true` + decision logs
+- Transaction hash + explorer link (BaseScan / Arbiscan / Degen explorer)
+- If running in a dry-run mode, attach decision logs and explain why payout was not executed
 
 ### 6) POIDH Indexer integration
 

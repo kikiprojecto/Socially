@@ -12,7 +12,7 @@ export const NETWORKS = {
     name: 'Base Sepolia',
     chainId: 84532,
     rpcUrl: 'https://sepolia.base.org',
-    poidhContract: '0xTESTNET_CONTRACT_HERE',
+    poidhContract: null,
     explorerUrl: 'https://sepolia.basescan.org',
     currency: 'ETH',
     testnet: true
@@ -30,7 +30,7 @@ export const NETWORKS = {
     name: 'Arbitrum Sepolia',
     chainId: 421614,
     rpcUrl: 'https://sepolia-rollup.arbitrum.io/rpc',
-    poidhContract: '0xTESTNET_CONTRACT_HERE',
+    poidhContract: null,
     explorerUrl: 'https://sepolia.arbiscan.io',
     currency: 'ETH',
     testnet: true
@@ -50,6 +50,14 @@ export function getNetworkConfig(networkName) {
   const config = NETWORKS[networkName];
   if (!config) {
     throw new Error(`Unknown network: ${networkName}. Available: ${Object.keys(NETWORKS).join(', ')}`);
+  }
+
+  if (!config.poidhContract) {
+    const override = (process.env.POIDH_EVM_CONTRACT_ADDRESS || '').trim();
+    if (!override) {
+      throw new Error(`Missing poidh contract address for ${networkName}. Set POIDH_EVM_CONTRACT_ADDRESS.`);
+    }
+    return { ...config, poidhContract: override };
   }
   return config;
 }
