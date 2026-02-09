@@ -1,49 +1,74 @@
+import axios from 'axios';
+import FormData from 'form-data';
+
 export class IPFSClient {
-  constructor(opts = {}) {
-    this.pinataApiKey = (opts.pinataApiKey ?? process.env.PINATA_API_KEY ?? '').trim();
-    this.pinataSecretKey = (opts.pinataSecretKey ?? process.env.PINATA_SECRET_KEY ?? '').trim();
-    this.gatewayBaseUrl = (opts.gatewayBaseUrl ?? process.env.IPFS_GATEWAY_BASE_URL ?? 'https://gateway.pinata.cloud/ipfs').replace(/\/$/, '');
-  }
+  constructor() {
+    this.pinataApiKey = process.env.PINATA_API_KEY;
+    this.pinataSecretKey = process.env.PINATA_SECRET_KEY;
 
-  ipfsToGatewayUrl(ipfsUrl) {
-    if (!ipfsUrl) return null;
-    if (ipfsUrl.startsWith('ipfs://')) {
-      const cid = ipfsUrl.replace(/^ipfs:\/\//, '');
-      return `${this.gatewayBaseUrl}/${cid}`;
-    }
-    return ipfsUrl;
-  }
-
-  async uploadBuffer(buffer, filename) {
     if (!this.pinataApiKey || !this.pinataSecretKey) {
-      throw new Error('Missing PINATA_API_KEY/PINATA_SECRET_KEY');
+      console.warn('Pinata API keys not configured. IPFS features will be limited.');
+    }
+  }
+
+  async uploadImage(imageBuffer, filename) {
+    if (!this.pinataApiKey) {
+      throw new Error('Pinata API key not configured');
     }
 
-    const fd = new FormData();
-    fd.append('file', new Blob([buffer]), filename);
+    const formData = new FormData();
+    formData.append('file', imageBuffer, filename);
 
-    const res = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
-      method: 'POST',
-      headers: {
-        pinata_api_key: this.pinataApiKey,
-        pinata_secret_api_key: this.pinataSecretKey
-      },
-      body: fd
-    });
+    const response = await axios.post(
+      'https://api.pinata.cloud/pinning/pinFileToIPFS',
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+          pinata_api_key: this.pinataApiKey,
+          pinata_secret_api_key: this.pinataSecretKey
+        },
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
+      }
+    );
 
-    if (!res.ok) {
-      const body = await res.text().catch(() => '');
-      throw new Error(body || `Pinata upload failed: ${res.status}`);
-    }
-
-    const data = await res.json();
-    const hash = data?.IpfsHash;
-    if (!hash) throw new Error('Pinata response missing IpfsHash');
+    const ipfsHash = response.data.IpfsHash;
+    const ipfsUrl = `ipfs://${ipfsHash}`;
+    const gatewayUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
 
     return {
-      ipfsHash: hash,
-      ipfsUrl: `ipfs://${hash}`,
-      gatewayUrl: `${this.gatewayBaseUrl}/${hash}`
+      ipfsUrl,
+      gatewayUrl,
+      ipfsHash
     };
+  }
+
+  async fetchImage(ipfsUrl) {
+    let fetchUrl;
+    if (ipfsUrl.startsWith('ipfs://')) {
+      const ipfsHash = ipfsUrl.replace('ipfs://', '');
+      fetchUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+    } else if (ipfsUrl.startsWith('http')) {
+      fetchUrl = ipfsUrl;
+    } else {
+      throw new Error(`Invalid IPFS URL: ${ipfsUrl}`);
+    }
+
+    const response = await axios.get(fetchUrl, {
+      responseType: 'arraybuffer',
+      timeout: 30000,
+      maxContentLength: 50 * 1024 * 1024
+    });
+
+    return Buffer.from(response.data);
+  }
+
+  toGatewayUrl(ipfsUrl) {
+    if (ipfsUrl.startsWith('ipfs://')) {
+      const hash = ipfsUrl.replace('ipfs://', '');
+      return `https://gateway.pinata.cloud/ipfs/${hash}`;
+    }
+    return ipfsUrl;
   }
 }
