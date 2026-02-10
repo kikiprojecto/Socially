@@ -45,15 +45,21 @@ cp .env.example .env
 # 3. Run demo
 npm start
 
-# Bot will automatically:
+# Bot will:
 # - Create mock bounty
-# - Generate 3 test submissions
+# - Wait for manual submissions via API
 # - Evaluate with REAL Claude AI
 # - Select winner transparently
-# - Complete in ~2 minutes
 ```
 **No ETH needed | No contract address needed | Perfect for demo**
 
+To submit a claim, use the following API endpoint:
+```bash
+curl -X POST \
+  http://localhost:3001/api/mock/add-claim \
+  -H 'Content-Type: application/json' \
+  -d '{"bountyId":"<use bountyId from logs>","description":"Test submission - stranger holding POIDH sign","imageURI":"ipfs://QmAnyStringWorksInMock"}'
+```
 See [MOCK_MODE.md](MOCK_MODE.md) for details.
 
 ---
@@ -91,6 +97,19 @@ npm start
 ---
 
 ## 📖 How It Works
+
+## ⚠️ IMPORTANT: Mock Mode vs Production
+
+### Mock Mode (Testing Only)
+- ❌ **CANNOT be used for bounty submission**
+- ❌ Auto-generated submissions violate bounty rules
+- ✅ Use only for testing code functionality
+
+### Production Mode (Required for Bounty)
+- ✅ Creates real bounty on poidh.xyz
+- ✅ Waits for REAL stranger submissions
+- ✅ Valid for bounty claim
+- 💰 Budget needed: ~$5 on Base
 
 ### Complete Autonomous Cycle
 

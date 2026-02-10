@@ -62,85 +62,41 @@ export class MockPoidhContract {
   }
 
   async monitorClaims(bountyId, callback) {
-    logger.info('🎭 MOCK: Starting claim monitoring...', {
-      bountyId,
-      note: 'Will auto-generate 3 realistic test submissions in 10 seconds'
-    });
+    logger.info(`\n🎭 MOCK: Monitoring claims for bounty ${bountyId}...`);
+    logger.warn('═══════════════════════════════════════════════════════');
+    logger.warn('⚠️  MOCK MODE - TESTING ONLY');
+    logger.warn('For bounty submission: Deploy to mainnet, wait for REAL users');
+    logger.warn('═══════════════════════════════════════════════════════\n');
 
     this.eventCallbacks.set(bountyId, callback);
 
-    setTimeout(async () => {
-      await this.generateTestSubmissions(bountyId, callback);
-    }, 10000);
+    logger.info('Listening for manual claim submissions via API...');
+    logger.info('POST http://localhost:3001/api/mock/add-claim to test\n');
   }
 
-  async generateTestSubmissions(bountyId, callback) {
-    logger.info('🎭 MOCK: Generating test submissions...', { bountyId });
+  async addManualClaim(bountyId, claimData) {
+    const bounty = this.bounties.get(bountyId);
+    if (!bounty) throw new Error(`Bounty ${bountyId} not found`);
 
-    const now = Date.now();
-    const testSubmissions = [
-      {
-        description:
-          'Perfect submission: Clear outdoor photo with stranger holding large handwritten "POIDH" sign. Both people smiling, excellent lighting, professional quality. Taken in public park with visible background.',
-        imageURI: `ipfs://QmMockHighQuality${now}`,
-        expectedScore: 92,
-        quality: 'HIGH'
-      },
-      {
-        description:
-          'Good submission: Photo with POIDH sign visible but taken indoors. Lighting is acceptable, sign is readable but smaller. Both people present but casual setting.',
-        imageURI: `ipfs://QmMockMediumQuality${now}`,
-        expectedScore: 78,
-        quality: 'MEDIUM'
-      },
-      {
-        description:
-          'Marginal submission: Blurry photo, sign partially visible, poor lighting. Taken indoors with cluttered background. Sign text barely readable.',
-        imageURI: `ipfs://QmMockLowQuality${now}`,
-        expectedScore: 65,
-        quality: 'LOW'
-      }
-    ];
+    const claimId = bounty.claimCount.toString();
+    const { claimer, description, imageURI } = claimData;
 
-    for (let i = 0; i < testSubmissions.length; i++) {
-      const sub = testSubmissions[i];
-      const claimId = i.toString();
-      const claimer = `0x${crypto.randomBytes(20).toString('hex')}`;
+    const claim = {
+      claimer: claimer || `0x${crypto.randomBytes(20).toString('hex')}`,
+      description,
+      imageURI,
+      createdAt: Date.now(),
+      accepted: false
+    };
 
-      const claim = {
-        claimer,
-        description: sub.description,
-        imageURI: sub.imageURI,
-        createdAt: Date.now(),
-        accepted: false,
-        _mockQuality: sub.quality,
-        _mockExpectedScore: sub.expectedScore
-      };
+    const claimKey = `${bountyId}_${claimId}`;
+    this.claims.set(claimKey, claim);
+    bounty.claimCount++;
 
-      const claimKey = `${bountyId}_${claimId}`;
-      this.claims.set(claimKey, claim);
+    const callback = this.eventCallbacks.get(bountyId);
+    if (callback) await callback({ bountyId, claimId, ...claim });
 
-      const bounty = this.bounties.get(bountyId);
-      if (bounty) bounty.claimCount++;
-
-      logger.success('✅ Mock claim created', {
-        bountyId,
-        claimId,
-        claimer,
-        quality: sub.quality,
-        expectedScore: sub.expectedScore
-      });
-
-      if (callback) {
-        await callback({ bountyId, claimId, claimer, ...claim });
-      }
-
-      if (i < testSubmissions.length - 1) {
-        await this.sleep(3000);
-      }
-    }
-
-    logger.success('✅ All 3 mock submissions generated successfully!', { bountyId });
+    return claimId;
   }
 
   async getClaim(bountyId, claimId) {

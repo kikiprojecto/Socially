@@ -42,35 +42,25 @@ npm run setup
 npm start
 ```
 
-### 4. Watch the Flow
+### 4. Submit Test Claims Manually (Required)
 
-The bot will automatically:
-1️⃣  Initialize (5 seconds)
-✅ Load wallet (no funding needed)
-✅ Initialize mock contract
-✅ Connect Claude AI (real)
-2️⃣  Create Bounty (2 seconds)
-✅ Generate mock bounty
-✅ Simulate on-chain transaction
-✅ Start monitoring
-3️⃣  Generate Submissions (10 seconds wait)
-📥 Create 3 test submissions
-📥 Different quality levels
-📥 Realistic descriptions
-4️⃣  AI Evaluation (15-30 seconds)
-🤖 REAL Claude analysis
-🤖 Score each submission /100
-🤖 Provide reasoning
-5️⃣  Select Winner (instant)
-🏆 Rank by score
-🏆 Select highest (≥70)
-🏆 Log transparent decision
-6️⃣  Pay Winner (2 seconds)
-💰 Simulate payment
-💰 Log transaction
-✅ Complete cycle
+Mock Mode **does not auto-generate** submissions.
 
-**Total time: ~1-2 minutes**
+After the bot creates a bounty, add claims via:
+
+`POST http://localhost:3001/api/mock/add-claim`
+
+Example body:
+```json
+{
+  "bountyId": "<use bountyId from logs>",
+  "description": "Test submission - stranger holding POIDH sign",
+  "imageURI": "ipfs://QmAnyStringWorksInMock",
+  "claimer": "0x0000000000000000000000000000000000000001"
+}
+```
+
+The bot will fetch a generated test image (mock IPFS), then run **REAL Claude evaluation**.
 
 ## Verify Results
 

@@ -15,6 +15,21 @@ const config = {
   pollingInterval: Number.parseInt(process.env.POLLING_INTERVAL || '60000', 10)
 };
 
+console.log('\n');
+console.log('═'.repeat(80));
+if (process.env.MOCK_MODE === 'true') {
+  console.log('⚠️  MOCK MODE - TESTING ONLY');
+  console.log('This mode CANNOT be used for bounty submission');
+  console.log('Bounty requires REAL submissions from strangers on poidh.xyz');
+  console.log('Deploy to mainnet (MOCK_MODE=false) for actual submission');
+} else {
+  console.log('🚀 PRODUCTION MODE - REAL BLOCKCHAIN');
+  console.log('Creating real bounty on poidh.xyz');
+  console.log('Waiting for real user submissions');
+}
+console.log('═'.repeat(80));
+console.log('\n');
+
 if (!process.env.ANTHROPIC_API_KEY) {
   console.error('ANTHROPIC_API_KEY not set in .env file');
   process.exit(1);
@@ -54,6 +69,9 @@ async function main() {
     });
 
     bot = new AutonomousBountyBot(config, serverHandle.botWS);
+    if (serverHandle?.app) {
+      serverHandle.app.set('bot', bot);
+    }
     botRunPromise = bot.run();
 
     process.on('SIGINT', () => {

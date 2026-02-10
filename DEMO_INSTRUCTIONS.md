@@ -28,7 +28,22 @@ ANTHROPIC_API_KEY=your_real_anthropic_key_here
 npm start
 ```
 
-### Step 4: Verify
+### Step 4: Submit a Test Claim
+
+Use any HTTP client to POST a claim:
+
+`POST http://localhost:3001/api/mock/add-claim`
+
+Body:
+```json
+{
+  "bountyId": "<use bountyId from logs>",
+  "description": "Test submission - stranger holding POIDH sign",
+  "imageURI": "ipfs://QmAnyStringWorksInMock"
+}
+```
+
+### Step 5: Verify
 
 Check logs:
 ```bash

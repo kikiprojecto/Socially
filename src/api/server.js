@@ -3,6 +3,7 @@ import cors from 'cors';
 import { createServer as createHttpServer } from 'http';
 
 import botRoutes from './routes/bot.js';
+import mockRoutes from './routes/mock.js';
 import statusRoutes from './routes/status.js';
 import { BotWebSocket } from './websocket.js';
 import { Logger } from '../storage/Logger.js';
@@ -21,6 +22,7 @@ export function createServer(opts = {}) {
 
   app.use('/api/status', statusRoutes(opts));
   app.use('/api/bot', botRoutes(opts));
+  app.use('/api/mock', mockRoutes);
 
   return app;
 }
