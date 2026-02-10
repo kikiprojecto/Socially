@@ -27,6 +27,14 @@ export class Logger {
     this.write('bot', { level: 'error', message, ...data });
   }
 
+  warn(message, data = {}) {
+    this.write('bot', { level: 'warn', message, ...data });
+  }
+
+  success(message, data = {}) {
+    this.write('bot', { level: 'success', message, ...data });
+  }
+
   decision(message, data = {}) {
     this.write('decisions', { level: 'decision', message, ...data });
   }

@@ -18,6 +18,8 @@ describe('Logger', () => {
     const logger = new Logger({ logDir: tmpDir });
 
     logger.info('hello', { a: 1 });
+    logger.warn('heads up', { w: 1 });
+    logger.success('ok', { s: 1 });
     logger.error('oops', { b: 2 });
     logger.decision('winner', { c: 3 });
 

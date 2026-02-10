@@ -26,6 +26,40 @@ Built for the [poidh AI bounty challenge](https://poidh.xyz). See [BOUNTY_CLAIM.
 ---
 
 ## 🚀 Quick Start
+
+### Option A: Quick Demo (Mock Mode - No Blockchain Required)
+
+**Perfect for testing and demonstration:**
+```bash
+# 1. Clone and install
+git clone https://github.com/kikiprojecto/Socially.git
+cd Socially
+npm install
+
+# 2. Enable mock mode
+cp .env.example .env
+# Edit .env:
+# - Set MOCK_MODE=true
+# - Add your ANTHROPIC_API_KEY
+
+# 3. Run demo
+npm start
+
+# Bot will automatically:
+# - Create mock bounty
+# - Generate 3 test submissions
+# - Evaluate with REAL Claude AI
+# - Select winner transparently
+# - Complete in ~2 minutes
+```
+**No ETH needed | No contract address needed | Perfect for demo**
+
+See [MOCK_MODE.md](MOCK_MODE.md) for details.
+
+---
+
+### Option B: Production Mode (Real Blockchain)
+
 ```bash
 # 1. Clone and install
 git clone https://github.com/kikiprojecto/Socially.git

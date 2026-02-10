@@ -13,6 +13,7 @@
     "test:e2e": "set NODE_NO_WARNINGS=1&& node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand tests/e2e",
     "test:coverage": "set NODE_NO_WARNINGS=1&& node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand --coverage",
     "test:integration": "node scripts/test-integration.js",
+    "test:mock": "node scripts/test-mock-mode.js",
     "lint": "eslint src/**/*.js",
     "format": "prettier --write \"src/**/*.{js,json}\"",
     "build:web": "cd web && npm run build",

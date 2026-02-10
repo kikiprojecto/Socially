@@ -4,8 +4,10 @@ import { fileURLToPath } from 'url';
 
 import { loadOrCreateWallet, connectWallet, getBalance } from '../blockchain/wallet.js';
 import { PoidhContract } from '../blockchain/PoidhContract.js';
+import { MockPoidhContract } from '../blockchain/MockContract.js';
 import { ClaudeEvaluator } from '../ai/ClaudeEvaluator.js';
 import { IPFSClient } from '../storage/IPFSClient.js';
+import { MockIPFSClient } from '../storage/MockIPFS.js';
 import { Logger } from '../storage/Logger.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -27,6 +29,8 @@ export class AutonomousBountyBot {
   async initialize() {
     this.logger.info('Initializing bot', { network: this.config.network });
 
+    const isMockMode = process.env.MOCK_MODE === 'true';
+
     const wallet = loadOrCreateWallet();
     this.wallet = connectWallet(wallet, this.config.network);
 
@@ -34,13 +38,32 @@ export class AutonomousBountyBot {
     this.logger.info('Wallet balance', { address: this.wallet.address, balanceEth: balance });
 
     const minBalance = 0.01;
-    if (Number.parseFloat(balance) < minBalance) {
+    if (!isMockMode && Number.parseFloat(balance) < minBalance) {
       throw new Error(`Insufficient balance. Need at least ${minBalance} ETH`);
     }
 
-    this.contract = new PoidhContract(this.wallet, this.config.network);
+    if (isMockMode) {
+      this.logger.warn('\n═══════════════════════════════════════════════════════');
+      this.logger.warn('⚠️  MOCK MODE ACTIVE - DEMO/TESTING ENVIRONMENT');
+      this.logger.warn('═══════════════════════════════════════════════════════');
+      this.logger.warn('✅ AI Evaluation: REAL (Claude API)');
+      this.logger.warn('✅ Winner Selection: REAL (Transparent scoring)');
+      this.logger.warn('✅ Decision Logging: REAL (All logged)');
+      this.logger.warn('❌ Blockchain TX: SIMULATED (No gas fees)');
+      this.logger.warn('❌ IPFS Storage: SIMULATED (Test images)');
+      this.logger.warn('═══════════════════════════════════════════════════════\n');
+
+      this.contract = new MockPoidhContract(this.wallet, this.config.network);
+      this.ipfs = new MockIPFSClient();
+    } else {
+      this.contract = new PoidhContract(this.wallet, this.config.network);
+      this.ipfs = new IPFSClient();
+    }
+
     this.evaluator = new ClaudeEvaluator(process.env.ANTHROPIC_API_KEY);
-    this.ipfs = new IPFSClient();
+
+    this.logger.info(isMockMode ? 'Mock contract initialized' : 'poidh contract initialized');
+    this.logger.info(isMockMode ? 'Mock IPFS initialized' : 'IPFS client initialized');
 
     this.logger.info('Initialization complete');
   }
